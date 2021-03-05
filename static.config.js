@@ -2,6 +2,7 @@ import path from 'path'
 import axios from 'axios'
 
 export default {
+  siteRoot: 'https://ethtrader.github.io/donut.site',
   getRoutes: async () => [
     // {
     //   path: 'about',
