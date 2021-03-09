@@ -1,7 +1,24 @@
+import React from 'react'
 import path from 'path'
 
 export default {
-  siteRoot: 'https://www.donut.community',
+  siteRoot: 'https://www.donut.finance',
+  Document: ({
+    Html,
+    Head,
+    Body,
+    children,
+    state: { siteData, renderMeta },
+  }) => (
+    <Html lang="en">
+      <Head>
+        <title>EthTrader Donuts</title>
+        <meta charSet="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </Head>
+      <Body>{children}</Body>
+    </Html>
+  ),
   getRoutes: async () => [
     // {
     //   path: 'about',
