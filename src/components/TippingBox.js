@@ -7,7 +7,7 @@ import { parseEther, formatEther } from "@ethersproject/units"
 import { formatBytes32String, parseBytes32String } from "@ethersproject/strings"
 import { MaxUint256 } from "@ethersproject/constants"
 import { useDonuts} from 'hooks/useDonuts';
-import { fetchCors, postData } from 'utils'
+import { commaNumber, fetchCors, postData } from 'utils'
 import { addresses, abis } from "contracts";
 
 import './TippingBox.scss';
@@ -22,7 +22,7 @@ export default (props) => {
   const [contentId, setContentId] = useState(props.contentId)
   const [recipient, setRecipient] = useState(props.recipient)
   const [address, setAddress] = useState(props.address)
-  const [amount, setAmount] = useState(1000)
+  const [amount, setAmount] = useState("1,000")
   const [approved, setApproved] = useState(false)
   const [content, setContent] = useState('')
 
@@ -50,6 +50,10 @@ export default (props) => {
     setApproved(allowance.gte(parseEther(amount.toString())))
   }
 
+  const setFormattedTipAmount = amount => {
+    setAmount(commaNumber(amount.replace(/,/g, '')));
+  };
+
   const buttonDisabled = isSending || !amount;
   const buttonClass = classNames('complete cute-pink-btn', {
     disabled: buttonDisabled,
@@ -61,10 +65,10 @@ export default (props) => {
       if(approved) {
         action = <div className={buttonClass} onClick={()=>tip(signer, chainId, 'DONUT', address, amount, contentId, setIsSending)}>Send Tip</div>
       } else {
-        action = <div className={buttonClass} onClick={()=>approve(token.connect(signer), addresses[chainId].tipping).then(checkApproval)}>Approve</div>
+        action = <div className={buttonClass} onClick={()=>approve(token.connect(signer), addresses[chainId].tipping, setIsSending).then(checkApproval)}>Approve</div>
       }
     } else {
-      action = <div className={buttonClass} onClick={()=>useXDai(library)}>Use xDai</div>
+      action = <div className={buttonClass} onClick={()=>useXDai(library, setIsSending)}>Use xDai</div>
     }
   } else {
     action = <div className="complete cute-pink-btn disabled">Connect Wallet First</div>
@@ -80,7 +84,7 @@ export default (props) => {
         <p className="body">{content}</p>
       </div>
       <div className="cute-input quantity-container">
-        <input value={amount} type="number" onChange={e => setAmount(e.target.value)} />
+        <input value={amount} onChange={e => setFormattedTipAmount(e.target.value)} />
         <div className="token">DONUT</div>
       </div>
       {action}
@@ -90,8 +94,12 @@ export default (props) => {
 
 async function approve(token, spender, setIsSending){
   setIsSending(true)
-  let tx = await token.approve(spender, MaxUint256)
-  await tx.wait()
+  try {
+    let tx = await token.approve(spender, MaxUint256)
+    await tx.wait()
+  } catch (e){
+
+  }
   setIsSending(false)
 }
 
@@ -99,25 +107,33 @@ async function tip(signer, chainId, tokenSymbol, recipientAddress, amount, conte
   setIsSending(true)
   const tokenAddress = addresses[chainId][tokenSymbol]
   const tipping = new Contract(addresses[chainId].tipping, abis.Tipping, signer)
-  let tx = await tipping.tip(recipientAddress, parseEther(amount.toString()), tokenAddress, formatBytes32String(contentId))
-  await tx.wait()
+  try {
+    let tx = await tipping.tip(recipientAddress, parseEther(amount.toString()), tokenAddress, formatBytes32String(contentId))
+    await tx.wait()
+  } catch(e){
+
+  }
   setIsSending(false)
 }
 
 async function useXDai(library, setIsSending){
   setIsSending(true)
-  let reponse = await library.jsonRpcFetchFunc("wallet_addEthereumChain", [{
-    chainId: "0x64", // A 0x-prefixed hexadecimal string
-    chainName: "xDai",
-    nativeCurrency: {
-      name: "xDai",
-      symbol: "xDai", // 2-6 characters long
-      decimals: 18,
-    },
-    rpcUrls: ["https://rpc.xdaichain.com/"],
-    blockExplorerUrls: ["https://blockscout.com/xdai/mainnet"],
-    // iconUrls: string[]; // Currently ignored.
-  }])
+  try {
+    let reponse = await library.jsonRpcFetchFunc("wallet_addEthereumChain", [{
+      chainId: "0x64", // A 0x-prefixed hexadecimal string
+      chainName: "xDai",
+      nativeCurrency: {
+        name: "xDai",
+        symbol: "xDai", // 2-6 characters long
+        decimals: 18,
+      },
+      rpcUrls: ["https://rpc.xdaichain.com/"],
+      blockExplorerUrls: ["https://blockscout.com/xdai/mainnet"],
+      // iconUrls: string[]; // Currently ignored.
+    }])
+  } catch(e){
+
+  }
   setIsSending(false)
 }
 //
