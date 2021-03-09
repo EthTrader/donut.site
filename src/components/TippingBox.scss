@@ -43,6 +43,28 @@
   font-size: 21px;
 }
 
+.reddit-preview {
+  background-color: rgba(0,0,0,.3);
+  border: 1px solid #563a3d;
+  border-radius: 15px;
+  color: #fac4b6;
+  margin-top: 30px;
+  padding: 12px 15px 15px;
+  font-size: 13px;
+  line-height: 17px;
+  .author {
+    margin: 0;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .body {
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
 .cute-input {
   font-weight: 500;
   font-size: 16px;
@@ -94,7 +116,7 @@
   }
 
   .quantity-container {
-    margin-top: 50px;
+    margin-top: 25px;
 
     input {
       background-color: transparent;

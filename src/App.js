@@ -1,7 +1,8 @@
 import React from 'react'
 import classNames from 'classnames';
+import { Web3Provider, getDefaultProvider } from "@ethersproject/providers";
 import { Root, Routes, addPrefetchExcludes } from 'react-static';
-import { ConnectionRejectedError, UseWalletProvider, useWallet } from 'use-wallet';
+import { Web3ReactProvider, useWeb3React } from '@web3-react/core'
 import { UseDonutsProvider, useDonuts} from 'hooks/useDonuts';
 import { Link, Router } from 'components/Router';
 import Dynamic from 'containers/Dynamic';
@@ -13,14 +14,12 @@ import './App.css'
 addPrefetchExcludes(['dynamic'])
 
 function App() {
-  const wallet = useWallet();
 
   return (
     <Root>
       <div className="app">
         <nav>
           <WalletInfo />
-          {wallet.error && wallet.error.name === "ChainUnsupportedError" && <p>Switch to {wallet.networkName}</p>}
         </nav>
         <React.Suspense fallback={<em>Loading...</em>}>
           <Router>
@@ -34,16 +33,20 @@ function App() {
 }
 
 function DonutProvider({children}){
-  const wallet = useWallet();
-  return <UseDonutsProvider wallet={wallet}>
+  const web3React = useWeb3React();
+  return <UseDonutsProvider web3React={web3React}>
     {children}
   </UseDonutsProvider>
 }
 
+function getLibrary(provider, connector) {
+  return new Web3Provider(provider)
+}
+
 export default () => (
-  <UseWalletProvider chainId={100} connectors={{}}>
+  <Web3ReactProvider getLibrary={getLibrary}>
     <DonutProvider>
       <App />
     </DonutProvider>
-  </UseWalletProvider>
+  </Web3ReactProvider>
 )

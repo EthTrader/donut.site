@@ -1,5 +1,8 @@
 import React, { useContext } from 'react';
-import { useWallet } from 'use-wallet';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTimes } from '@fortawesome/free-solid-svg-icons'
+import { useWeb3React } from '@web3-react/core'
+import { InjectedConnector, NoEthereumProviderError, UserRejectedRequestError } from '@web3-react/injected-connector'
 import { useDonuts} from 'hooks/useDonuts';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 import { shortNum } from '../utils';
@@ -12,24 +15,25 @@ const ConnectYourWalletButton = ({connect}) => {
   </div>
 }
 
-const WalletDetails = ({ wallet, donuts, disconnect }) => {
-  const address = wallet.account;
-  const shorthand = address.substr(0, 6) + '...' + address.substr(address.length - 4);
+const WalletDetails = ({ account, donuts, disconnect }) => {
+  const shorthand = account.substr(0, 6) + '...' + account.substr(account.length - 4);
   return <div className="wallet-details box">
-    <div className="donut-bal">{shortNum(formatEther(donuts.balance))}  🍩</div>
+    <div className="donut-bal">{shortNum(formatEther(donuts.donutBalance))}  🍩</div>
     <div className="address-container">
       <div className="short-address">{shorthand}</div>
-      <Jazzicon diameter={18} seed={jsNumberForAddress(address)} />
+      <Jazzicon diameter={18} seed={jsNumberForAddress(account)} />
     </div>
-    <div className="disconnect" onClick={disconnect}>X</div>
+    <FontAwesomeIcon className="disconnect" onClick={disconnect} icon={faTimes} />
   </div>
 };
 
 export default () => {
-  const wallet = useWallet();
   const donuts = useDonuts();
+  const { account, active, activate, deactivate } = useWeb3React();
   return <div className="wallet-info">
-    {wallet.status !== 'connected' && <ConnectYourWalletButton connect={()=>wallet.connect()} />}
-    {wallet.status === 'connected' && <WalletDetails wallet={wallet} donuts={donuts} disconnect={()=>wallet.reset()} />}
+    {active ?
+      <WalletDetails account={account} donuts={donuts} disconnect={deactivate} /> :
+      <ConnectYourWalletButton connect={()=>{activate(new InjectedConnector(), undefined, true)}} />
+    }
   </div>
 };

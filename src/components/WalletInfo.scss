@@ -1,5 +1,8 @@
 .wallet-details {
   border-radius: 8px;
+  .disconnect {
+    cursor: pointer;
+  }
 }
 
 .wallet-info {
