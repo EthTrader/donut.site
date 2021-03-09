@@ -1,0 +1,25 @@
+body, html {
+  color: rgb(255, 255, 255);
+  background: rgba(0, 0, 0, 0) linear-gradient(60.06deg, rgb(18, 18, 18) -3.57%, rgb(36, 2, 28) 96.96%) repeat scroll 0% 0%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.nav {
+  color: rgb(254, 109, 222);
+  font-weight: bold;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  cursor: pointer;
+}

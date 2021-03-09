@@ -1,0 +1,36 @@
+.wallet-details {
+  border-radius: 8px;
+}
+
+.wallet-info {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  .donut-bal {
+    display: inline-block;
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+  .address-container {
+    display: inline-block;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+    padding: 9px;
+    position: relative;
+    .short-address {
+      display: inline-block;
+      padding-right: 25px;
+      padding-left: 5px;
+    }
+    .paper {
+      position: absolute;
+      right: 9px;
+      top: 9px;
+    }
+  }
+  .disconnect {
+    display: inline-block;
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+}

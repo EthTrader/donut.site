@@ -1,0 +1,143 @@
+
+
+.box {
+  color: rgb(254, 109, 222) !important;
+  /*padding: 1.5rem 1.5rem 1.25rem;*/
+  background: rgba(0, 0, 0, 0) linear-gradient(90deg, rgba(254, 109, 222, 0.1) 0%, rgba(254, 109, 109, 0.1) 100%) repeat scroll 0% 0%;
+  border-radius: 20px;
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  transition: opacity 0.125s ease 0s;
+  text-decoration: none !important;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.box a {
+  color: #fdabeb !important;
+}
+
+.cute-pink-btn {
+  text-align: center;
+  background: linear-gradient(90deg, rgba(254,109,221,1) 0%, rgba(254,109,111,1) 100%);
+  color: white;
+  padding: 8px;
+  padding-left: 13px;
+  padding-right: 13px;
+  border-radius: 8px;
+}
+
+.cute-pink-btn:hover {
+  background: linear-gradient(90deg, rgba(255,146,230,1) 0%, rgba(255,141,142,1) 100%);
+  cursor: pointer;
+}
+
+.cute-pink-btn:active {
+  background: linear-gradient(90deg, rgba(207,62,174,1) 0%, rgba(207,61,63,1) 100%);
+  cursor: pointer;
+}
+
+.cute-header {
+  color: rgb(254, 109, 222);
+  font-weight: bold;
+  font-size: 21px;
+}
+
+.cute-input {
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 19px;
+  color: rgb(254, 109, 222);
+  background-color: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(254, 109, 222, 0.25);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+}
+
+.tipping-interface {
+  width: 440px;
+  margin-top: 50px;
+  transform: translateY(-50%) translateX(-50%);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  padding: 20px;
+  text-align: left;
+  opacity: 1;
+
+  transition-property: left, opacity;
+  transition-duration: 1s;
+
+  animation-duration: 1s;
+  animation-name: slidein;
+
+  .tip-info {
+    margin-top: -2px;
+  }
+
+  .tip-token {
+    text-align: center;
+    margin-right: 12px;
+    background: rgb(254, 109, 222);
+    display: inline-block;
+    float: left;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    border-radius: 8px;
+  }
+
+  .tip-token-info {
+    font-size: 12px;
+    font-style: italic;
+    margin-top: 4px;
+  }
+
+  .quantity-container {
+    margin-top: 50px;
+
+    input {
+      background-color: transparent;
+      border: none;
+      outline: none;
+      color: white;
+      padding: 0;
+      width: 80%;
+      -webkit-appearance: none;
+      margin: 0;
+      -moz-appearance: textfield;
+      font-size: 16px;
+    }
+    .token {
+      display: inline-block;
+      float: right;
+    }
+  }
+
+  .complete {
+    &.disabled {
+      opacity: 0.3;
+    }
+    margin-top: 45px;
+    padding: 15px;
+    font-size: 18px;
+  }
+
+}
+
+@keyframes slidein {
+  from {
+    transform: translateY(100%) translateX(-50%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(-50%) translateX(-50%);
+    opacity: 1;
+  }
+}
+
+.faqMode .tipping-interface {
+  left: 150%;
+  opacity: 0;
+}

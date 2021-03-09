@@ -1,5 +1,4 @@
 import path from 'path'
-import axios from 'axios'
 
 export default {
   siteRoot: 'https://www.donut.community',
@@ -21,6 +20,7 @@ export default {
       },
     ],
     require.resolve('react-static-plugin-reach-router'),
-    require.resolve('react-static-plugin-sitemap')
+    require.resolve('react-static-plugin-sitemap'),
+    require.resolve('react-static-plugin-sass')
   ],
 }
