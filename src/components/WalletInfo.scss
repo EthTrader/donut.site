@@ -1,14 +1,31 @@
-.wallet-details {
-  border-radius: 8px;
-  .disconnect {
-    cursor: pointer;
-  }
-}
-
 .wallet-info {
   position: absolute;
   top: 20px;
   right: 20px;
+  .light-background {
+    width: auto;
+    &.left-side {
+      float: left;
+    }
+    &.close-button {
+      float: right;
+    }
+    &.button {
+      &:hover {
+        background-color: #34112d;
+        cursor: pointer;
+      }
+      &:active {
+        background-color: #1e0e1b;
+      }
+      margin-left: 9px;
+      padding-top: 9px;
+      padding-bottom: 8px;
+      padding-left: 3px;
+      padding-right: 3px;
+    }
+    border-radius: 8px;
+  }
   .donut-bal {
     display: inline-block;
     padding-right: 10px;

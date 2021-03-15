@@ -59,6 +59,9 @@ export default (props) => {
     disabled: buttonDisabled,
   });
 
+  const [relayOn, setRelayOn] = useState(true);
+  const toggleRelay = () => setRelayOn(!relayOn);
+
   let action
   if(active){
     if(chainId === 100) {
@@ -86,6 +89,14 @@ export default (props) => {
       <div className="cute-input quantity-container">
         <input value={amount} onChange={e => setFormattedTipAmount(e.target.value)} />
         <div className="token">DONUT</div>
+      </div>
+      <div className="relay-container">
+        <div className="relay-text">
+          Use Relay
+        </div>
+        <div className={classNames('toggle', relayOn ? 'on' : 'off')} onClick={toggleRelay}>
+          <div className="circle" />
+        </div>
       </div>
       {action}
     </div>

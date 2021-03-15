@@ -17,13 +17,17 @@ const ConnectYourWalletButton = ({connect}) => {
 
 const WalletDetails = ({ account, donuts, disconnect }) => {
   const shorthand = account.substr(0, 6) + '...' + account.substr(account.length - 4);
-  return <div className="wallet-details box">
-    <div className="donut-bal">{shortNum(formatEther(donuts.donutBalance))}  🍩</div>
-    <div className="address-container">
-      <div className="short-address">{shorthand}</div>
-      <Jazzicon diameter={18} seed={jsNumberForAddress(account)} />
+  return <div className="wallet-details">
+    <div className="left-side light-background box">
+      <div className="donut-bal">{shortNum(formatEther(donuts.donutBalance))}  🍩</div>
+      <div className="address-container">
+        <div className="short-address">{shorthand}</div>
+        <Jazzicon diameter={18} seed={jsNumberForAddress(account)} />
+      </div>
     </div>
-    <FontAwesomeIcon className="disconnect" onClick={disconnect} icon={faTimes} />
+    <div className="light-background close-button button box">
+      <FontAwesomeIcon className="disconnect" onClick={disconnect} icon={faTimes} />
+    </div>
   </div>
 };
 
