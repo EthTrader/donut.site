@@ -18,7 +18,7 @@ function App() {
   return (
     <Root>
       <div className="app">
-        <nav>
+        <nav style={{position: "relative", zIndex: 100}}>
           <WalletInfo />
         </nav>
         <React.Suspense fallback={<em>Loading...</em>}>

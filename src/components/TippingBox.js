@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { useWeb3React } from '@web3-react/core'
 import classNames from 'classnames';
 import { Contract } from "@ethersproject/contracts";
@@ -7,8 +9,10 @@ import { parseEther, formatEther } from "@ethersproject/units"
 import { formatBytes32String, parseBytes32String } from "@ethersproject/strings"
 import { MaxUint256 } from "@ethersproject/constants"
 import { useDonuts} from 'hooks/useDonuts';
-import { commaNumber, fetchCors, postData } from 'utils'
+import { commaNumber, fetchCors, postData, getUser } from 'utils'
 import { addresses, abis } from "contracts";
+import Torus from "@toruslabs/torus-embed";
+const torus = new Torus();
 
 import './TippingBox.scss';
 
@@ -19,12 +23,40 @@ export default (props) => {
 
   const [isSending, setIsSending] = useState(false);
   // const [useRelay, setUseRelay] = useState(false)
+  const [url, setUrl] = useState("")
   const [contentId, setContentId] = useState(props.contentId)
   const [recipient, setRecipient] = useState(props.recipient)
-  const [address, setAddress] = useState(props.address)
+  const [donutAddress, setDonutAddress] = useState(props.address)
+  const [torusAddress, setTorusAddress] = useState()
   const [amount, setAmount] = useState("1,000")
   const [approved, setApproved] = useState(false)
   const [content, setContent] = useState('')
+
+  useEffect(()=>{
+    if(!url) { setContentId(''); setRecipient(''); return; }
+    let id='', tnum=0;
+
+    try {
+      let parts = (new URL(url)).pathname.split("/").filter(a=>(!!a))
+      if(parts.length === 6) {
+        id = parts[5]
+        tnum = 1
+      } else if(parts.length === 5) {
+        id = parts[3]
+        tnum = 3
+      } else if(parts.length === 2 && ["u","user"].includes(parts[0])) {
+        setRecipient(parts[1])
+      }
+    } catch(e) {
+      if(!url.includes("/"))
+        setRecipient(url)
+      else
+        console.log(e)
+    }
+
+    if([1,3].includes(tnum))
+      setContentId(`t${tnum}_${id}`)
+  }, [url])
 
   useEffect(()=>{
     if(!contentId) { setContent(''); return; }
@@ -32,13 +64,24 @@ export default (props) => {
       const json =  await fetchCors(`https://www.reddit.com/api/info.json?id=${contentId}`)
       const item = json.data.children[0]
       const { kind, data } = item
-      if(kind === "t3")
-        setContent(data.title)
-      else if(kind === "t1")
-        setContent(data.body)
+
+      setRecipient(data.author)
+      if(kind === "t3") setContent(data.title)
+      else if(kind === "t1") setContent(data.body)
     }
     getContent()
   }, [contentId])
+
+  useEffect(()=>{
+    if(!recipient) { setDonutAddress(''); setTorusAddress(''); return; }
+    async function getAddress(){
+      const user = getUser({username: recipient})
+      if(user && !donutAddress) setDonutAddress(user.address)
+      const torusAddress = await torus.getPublicAddress({verifier: "reddit", verifierId: recipient})
+      setTorusAddress(torusAddress)
+    }
+    getAddress()
+  }, [recipient])
 
   useEffect(()=>{
     if(!token) { setApproved(false); return; }
@@ -47,7 +90,7 @@ export default (props) => {
 
   async function checkApproval(){
     const allowance = await token.allowance(account, addresses[chainId].tipping)
-    setApproved(allowance.gte(parseEther(amount.toString())))
+    setApproved(allowance.gte(parseEther(amount.replace(/,/g, ''))))
   }
 
   const setFormattedTipAmount = amount => {
@@ -61,6 +104,17 @@ export default (props) => {
 
   const [relayOn, setRelayOn] = useState(true);
   const toggleRelay = () => setRelayOn(!relayOn);
+
+  let address, addressLogo
+  if(donutAddress) {
+    address = donutAddress
+    addressLogo = <span style={{cursor: "default", marginLeft: ".25em"}} title={`Using donut registered address for ${recipient} (${address})`}>🍩</span>
+  } else if(torusAddress) {
+    address = torusAddress
+    addressLogo = <img className="torus-logo" src="/torus_logo.png" alt="Torus Logo" title={`Using Tor.us address for ${recipient} (${address})`} />
+  } else {
+    addressLogo = <span className="wait"></span>
+  }
 
   let action
   if(active){
@@ -77,27 +131,42 @@ export default (props) => {
     action = <div className="complete cute-pink-btn disabled">Connect Wallet First</div>
   }
 
+  let recipientHeader
+  if(recipient){
+    recipientHeader = <React.Fragment>
+      <a style={{textDecoration: "none"}} href={`https://www.reddit.com/u/${recipient}`}>u/{recipient}</a>
+      <FontAwesomeIcon className="cancel" icon={faTimes} onClick={()=>{setUrl("")}} />
+    </React.Fragment>
+  }
+
   return (
     <div className="tipping-interface box">
       <div className="tip-token">🍩</div>
-      <div className="cute-header tip-info">Tipping /u/{recipient}</div>
+      <div className="cute-header tip-info">Tip {recipientHeader}</div>
       <div className="tip-token-info">EthTrader DONUTs</div>
-      <div className="reddit-preview">
-        <h3 className="author">{recipient}</h3>
-        <p className="body">{content}</p>
-      </div>
+      { (content || recipient)
+        ? <div className="reddit-preview">
+            <h3 className="author">
+              {recipient} {addressLogo}
+            </h3>
+            {content && <p className="body">{content}</p>}
+          </div>
+        : <div className="cute-input target-container">
+            <input placeholder="Url to content or recipient" value={url} onChange={e => setUrl(e.target.value)} />
+          </div>
+      }
       <div className="cute-input quantity-container">
         <input value={amount} onChange={e => setFormattedTipAmount(e.target.value)} />
         <div className="token">DONUT</div>
       </div>
-      <div className="relay-container">
+      {/*<div className="relay-container">
         <div className="relay-text">
           Use Relay
         </div>
         <div className={classNames('toggle', relayOn ? 'on' : 'off')} onClick={toggleRelay}>
           <div className="circle" />
         </div>
-      </div>
+      </div>*/}
       {action}
     </div>
   )

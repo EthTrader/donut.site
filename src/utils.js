@@ -1,3 +1,5 @@
+import users from './users'
+
 const corsProxyUrl = 'https://cors.bridged.cc'
 
 export const commaNumber = num => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",").replace(/[^0-9^,^\.]+/g, '');
@@ -32,4 +34,13 @@ export async function postData(url = '', data = {}) {
     body: JSON.stringify(data) // body data type must match "Content-Type" header
   });
   return response.json(); // parses JSON response into native JavaScript objects
+}
+
+export function getUser({username, address}){
+  if(username)
+    return users.find(u=>u.username.toLowerCase()===username.toLowerCase())
+  else if(address)
+    return users.find(u=>u.address.toLowerCase()===address.toLowerCase())
+  else
+    return null
 }

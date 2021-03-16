@@ -1,5 +1,3 @@
-
-
 .box {
   color: rgb(254, 109, 222) !important;
   /*padding: 1.5rem 1.5rem 1.25rem;*/
@@ -43,6 +41,16 @@
   font-size: 21px;
 }
 
+.cute-header.tip-info {
+  position: relative;
+  .cancel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 3px;
+  }
+}
+
 .reddit-preview {
   background-color: rgba(0,0,0,.3);
   border: 1px solid #563a3d;
@@ -55,10 +63,25 @@
   .author {
     margin: 0;
     font-weight: 700;
-    margin-bottom: 4px;
+    .torus-logo {
+      vertical-align: middle;
+      width: 1em;
+      border-radius: 0.5em;
+      margin-left: 0.25em;
+      margin-top: -0.2em;
+    }
+    .wait:after {
+      overflow: hidden;
+      display: inline-block;
+      vertical-align: bottom;
+      -webkit-animation: ellipsis steps(4,end) 900ms infinite;
+      animation: ellipsis steps(4,end) 900ms infinite;
+      content: "\2026"; /* ascii code for the ellipsis character */
+      width: 0px;
+    }
   }
   .body {
-    margin: 0;
+    margin: 4px 0 0 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -74,6 +97,19 @@
   border: 1px solid rgba(254, 109, 222, 0.25);
   padding: 0.5rem 1rem;
   border-radius: 20px;
+
+  input {
+    background-color: transparent;
+    border: none;
+    outline: none;
+    color: white;
+    padding: 0;
+    width: 80%;
+    -webkit-appearance: none;
+    margin: 0;
+    -moz-appearance: textfield;
+    font-size: 16px;
+  }
 }
 
 .tipping-interface {
@@ -92,6 +128,12 @@
 
   animation-duration: 1s;
   animation-name: slidein;
+
+  .cancel {
+    display: inline-block;
+    padding-right: 10px;
+    padding-left: 10px;
+  }
 
   .tip-info {
     margin-top: -2px;
@@ -115,21 +157,19 @@
     margin-top: 4px;
   }
 
+  .target-container {
+    margin-top: 25px;
+    input {
+      color: rgba(255,255,255,0.25);
+    }
+    ::placeholder {
+      font-style: italic;
+      color: rgba(255,255,255,0.25);
+    }
+  }
+
   .quantity-container {
     margin-top: 25px;
-
-    input {
-      background-color: transparent;
-      border: none;
-      outline: none;
-      color: white;
-      padding: 0;
-      width: 80%;
-      -webkit-appearance: none;
-      margin: 0;
-      -moz-appearance: textfield;
-      font-size: 16px;
-    }
     .token {
       display: inline-block;
       float: right;
@@ -199,5 +239,11 @@
       left: calc(100% - 28px);
       background-color: rgba(254, 109, 222, 0.7);
     }
+  }
+}
+
+@keyframes ellipsis {
+  to {
+    width: 1.25em;
   }
 }
