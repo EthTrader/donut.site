@@ -140,7 +140,7 @@
     &.disabled {
       opacity: 0.3;
     }
-    margin-top: 45px;
+    margin-top: 23px;
     padding: 15px;
     font-size: 18px;
   }
@@ -162,4 +162,42 @@
 .faqMode .tipping-interface {
   left: 150%;
   opacity: 0;
+}
+
+.relay-container {
+  .relay-text {
+    float: left;
+    line-height: 27px;
+    opacity: 0.7;
+    padding-left: 5px;
+  }
+  margin-top: 20px;
+  height: 30px;
+}
+
+.toggle {
+  background-color: rgba(0, 0, 0, 0.4);
+  width: 50px;
+  height: 30px;
+  border-radius: 18px;
+  float: right;
+  position: relative;
+  cursor: pointer;
+  .circle {
+    background-color: rgba(254, 109, 222, 0.2);
+    width: 26px;
+    height: 26px;
+    border-radius: 14px;
+    position: absolute;
+    top: calc(50% - 13px);
+    left: 2px;
+    transition-property: left, background-color;
+    transition-duration: 0.3s;
+  }
+  &.on {
+    .circle {
+      left: calc(100% - 28px);
+      background-color: rgba(254, 109, 222, 0.7);
+    }
+  }
 }
