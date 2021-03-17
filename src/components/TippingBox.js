@@ -9,7 +9,7 @@ import { parseEther, formatEther } from "@ethersproject/units"
 import { formatBytes32String, parseBytes32String } from "@ethersproject/strings"
 import { MaxUint256 } from "@ethersproject/constants"
 import { useDonuts} from 'hooks/useDonuts';
-import { commaNumber, fetchCors, postData, getUser, onlyPaste } from 'utils'
+import { commaNumber, fetchCors, postData, getUser, onlyPaste, isRedditUsername } from 'utils'
 import { addresses, abis } from "contracts";
 import Torus from "@toruslabs/torus-embed";
 const torus = new Torus();
@@ -46,23 +46,24 @@ export default (props) => {
         tnum = 3
       } else if(parts.length === 2 && ["u","user"].includes(parts[0])) {
         setRecipient(parts[1])
-      } else {
-        alert(`${url} could not be identified as a Reddit post, comment, or user.`)
-        setUrl('')
-      }
+      } else badUrl(url)
     } catch(e) {
-      if(!url.includes("/"))
-        setRecipient(url)
-      else {
-        alert(`${url} could not be identified as a Reddit post, comment, or user.`)
-        setUrl('')
-        console.log(e)
-      }
+      if(!url.includes("/")) {
+        isRedditUsername(url).then(valid=>{
+          if(valid) setRecipient(url)
+          else badUrl(url)
+        })
+      } else badUrl(url)
     }
 
     if([1,3].includes(tnum))
       setContentId(`t${tnum}_${id}`)
   }, [url])
+
+  const badUrl = (url)=>{
+    alert(`${url} could not be identified as a Reddit post, comment, or user.`)
+    setUrl('')
+  }
 
   useEffect(()=>{
     if(!contentId) { setContent(''); return; }
@@ -81,6 +82,12 @@ export default (props) => {
   useEffect(()=>{
     if(!recipient) { setDonutAddress(''); setTorusAddress(''); return; }
     async function getAddress(){
+      const { error } = await fetchCors(`https://old.reddit.com/user/${recipient}/about.json`)
+      if(error) {
+        setUrl('');
+        setRecipient('');
+        return;
+      }
       const user = getUser({username: recipient})
       if(user && !donutAddress) setDonutAddress(user.address)
       const torusAddress = await torus.getPublicAddress({verifier: "reddit", verifierId: recipient})

@@ -45,6 +45,12 @@ export function getUser({username, address}){
     return null
 }
 
+export async function isRedditUsername(username){
+  const { error } = await fetchCors(`https://old.reddit.com/user/${username}/about.json`)
+  if(error) return false
+  return true
+}
+
 export function onlyPaste(evt){
   // Note this could be a bit of overkill but I found some
 	// problems in Firefox and decided to go the distance
