@@ -9,7 +9,7 @@ import { parseEther, formatEther } from "@ethersproject/units"
 import { formatBytes32String, parseBytes32String } from "@ethersproject/strings"
 import { MaxUint256 } from "@ethersproject/constants"
 import { useDonuts} from 'hooks/useDonuts';
-import { commaNumber, fetchCors, postData, getUser } from 'utils'
+import { commaNumber, fetchCors, postData, getUser, onlyPaste } from 'utils'
 import { addresses, abis } from "contracts";
 import Torus from "@toruslabs/torus-embed";
 const torus = new Torus();
@@ -46,12 +46,18 @@ export default (props) => {
         tnum = 3
       } else if(parts.length === 2 && ["u","user"].includes(parts[0])) {
         setRecipient(parts[1])
+      } else {
+        alert(`${url} could not be identified as a Reddit post, comment, or user.`)
+        setUrl('')
       }
     } catch(e) {
       if(!url.includes("/"))
         setRecipient(url)
-      else
+      else {
+        alert(`${url} could not be identified as a Reddit post, comment, or user.`)
+        setUrl('')
         console.log(e)
+      }
     }
 
     if([1,3].includes(tnum))
@@ -152,7 +158,7 @@ export default (props) => {
             {content && <p className="body">{content}</p>}
           </div>
         : <div className="cute-input target-container">
-            <input placeholder="Url to content or recipient" value={url} onChange={e => setUrl(e.target.value)} />
+            <input placeholder="Paste recipient or content url" value={url} onChange={e => setUrl(e.target.value)} onKeyPress={onlyPaste} />
           </div>
       }
       <div className="cute-input quantity-container">

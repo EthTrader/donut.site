@@ -44,3 +44,44 @@ export function getUser({username, address}){
   else
     return null
 }
+
+export function onlyPaste(evt){
+  // Note this could be a bit of overkill but I found some
+	// problems in Firefox and decided to go the distance
+	// including old windows keyboard short cut keys.
+	// Enumerate all supported clipboard, undo and redo keys
+	const clipboardKeys = {
+		winInsert : 45,
+		winDelete : 46,
+		SelectAll : 97,
+		macCopy : 99,
+		macPaste : 118,
+		macCut : 120,
+		redo : 121,
+		undo : 122
+	}
+	// Simulate readonly but allow all clipboard, undo and redo action keys
+	const charCode = evt.which;
+	//alert(charCode);
+	// Accept ctrl+v, ctrl+c, ctrl+z, ctrl+insert, shift+insert, shift+del and ctrl+a
+	if (
+		evt.ctrlKey && charCode == clipboardKeys.redo ||		/* ctrl+y redo			*/
+		evt.ctrlKey && charCode == clipboardKeys.undo ||		/* ctrl+z undo			*/
+		evt.ctrlKey && charCode == clipboardKeys.macCut ||		/* ctrl+x mac cut		*/
+		evt.ctrlKey && charCode == clipboardKeys.macPaste ||		/* ctrl+v mac paste		*/
+		evt.ctrlKey && charCode == clipboardKeys.macCopy ||		/* ctrl+c mac copy		*/
+		evt.shiftKey && evt.keyCode == clipboardKeys.winInsert ||	/* shift+ins windows paste	*/
+		evt.shiftKey && evt.keyCode == clipboardKeys.winDelete ||	/* shift+del windows cut	*/
+		evt.ctrlKey && evt.keyCode == clipboardKeys.winInsert  ||	/* ctrl+ins windows copy	*/
+		evt.ctrlKey && charCode == clipboardKeys.SelectAll		/* ctrl+a select all		*/
+		){ return 0; }
+	// Shun all remaining keys simulating readonly textbox
+	const theEvent = evt || window.event;
+	let key = theEvent.keyCode || theEvent.which;
+	key = String.fromCharCode(key);
+	const regex = /[]|\./;
+	if(!regex.test(key)) {
+		theEvent.returnValue = false;
+		theEvent.preventDefault();
+	}
+}
