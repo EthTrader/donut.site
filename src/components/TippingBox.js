@@ -129,7 +129,9 @@ export default (props) => {
   }, [token, amount])
 
   async function checkApproval(){
+    console.log("checking approval")
     const allowance = await token.allowance(account, addresses[chainId].tipping)
+    console.log("allowance", allowance)
     setApproved(allowance.gte(parseEther(amount.replace(/,/g, ''))))
   }
 
@@ -240,19 +242,19 @@ async function approve(token, spender, setIsSending){
     let tx = await token.approve(spender, MaxUint256)
     await tx.wait()
   } catch (e){
-
+    throw e
   }
   setIsSending(false)
 }
 
 async function tip(signer, chainId, tokenSymbol, recipientAddress, amount, contentId, setIsSending){
-  const amountNum = parseInt(amount.replace(/,/g, ''))
-  console.log(tokenSymbol, recipientAddress, amount, amountNum, contentId)
+  amount = amount.replace(/,/g, '')
+  console.log(tokenSymbol, recipientAddress, amount, contentId)
   setIsSending(true)
   const tokenAddress = addresses[chainId][tokenSymbol]
   const tipping = new Contract(addresses[chainId].tipping, abis.Tipping, signer)
   try {
-    let tx = await tipping.tip(recipientAddress, parseEther(amountNum.toString()), tokenAddress, formatBytes32String(contentId))
+    let tx = await tipping.tip(recipientAddress, parseEther(amount), tokenAddress, formatBytes32String(contentId))
     await tx.wait()
   } catch(e){
     throw e
