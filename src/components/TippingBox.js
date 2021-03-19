@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect, useContext, useRef } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { useWeb3React } from '@web3-react/core'
@@ -16,6 +16,8 @@ const torus = new Torus();
 
 import './TippingBox.scss';
 
+let timeout;
+
 export default (props) => {
   const { account, active, chainId, library } = useWeb3React();
   const donuts = useDonuts();
@@ -31,6 +33,23 @@ export default (props) => {
   const [amount, setAmount] = useState("1,000")
   const [approved, setApproved] = useState(false)
   const [content, setContent] = useState('')
+
+  const urlRef = useRef(null);
+  const [userMode, setUserMode] = useState(true);
+
+  // first time setup
+  useEffect(() => {
+    if (recipient) {
+      setUrl(props.recipient);
+    }
+  }, []);
+
+  function clear() {
+    setUrl('');
+    setContentId('');
+    setContent('');
+    setRecipient('');
+  }
 
   useEffect(()=>{
     if(!url) { setContentId(''); setRecipient(''); return; }
@@ -49,16 +68,17 @@ export default (props) => {
       } else badUrl(url)
     } catch(e) {
       if(!url.includes("/")) {
-        isRedditUsername(url).then(valid=>{
+        clearTimeout(timeout);
+        timeout = setTimeout(() => isRedditUsername(url).then(valid=>{
           if(valid) setRecipient(url)
-          else badUrl(url)
-        })
-      } else badUrl(url)
+          else if (!userMode) badUrl(url)
+        }), 250);
+      } else if (!userMode) badUrl(url)
     }
 
     if([1,3].includes(tnum))
       setContentId(`t${tnum}_${id}`)
-  }, [url])
+  }, [url]);
 
   const badUrl = (url)=>{
     alert(`${url} could not be identified as a Reddit post, comment, or user.`)
@@ -147,17 +167,20 @@ export default (props) => {
   let recipientHeader
   if(recipient){
     recipientHeader = <React.Fragment>
-      <a style={{textDecoration: "none"}} href={`https://www.reddit.com/u/${recipient}`}>u/{recipient}</a>
-      <FontAwesomeIcon className="cancel" icon={faTimes} onClick={()=>{setUrl("")}} />
+      <a style={{textDecoration: "none"}} target="blank" href={`https://www.reddit.com/u/${recipient}`}>/u/{recipient}</a>
+      <FontAwesomeIcon className="cancel" icon={faTimes} onClick={()=>setUrl("") || urlRef.current.focus()} />
     </React.Fragment>
   }
-
   return (
     <div className="tipping-interface box">
       <div className="tip-token">🍩</div>
-      <div className="cute-header tip-info">Tip {recipientHeader}</div>
-      <div className="tip-token-info">EthTrader DONUTs</div>
-      { (content || recipient)
+      <div className="cute-header tip-info">
+        {recipientHeader ? <span>Tipping {recipientHeader}</span> : `Choose a ${userMode ? 'User' : 'Post'} to Tip`}
+      </div>
+      <div className="tip-token-info">
+        {recipientHeader ? 'EthTrader DONUTs' : <span>Or <a onClick={() => clear() || setUserMode(!userMode)}>click here</a> to tip a {userMode ? 'post' : 'user'}</span>}
+      </div>
+      { !userMode && (content || recipient)
         ? <div className="reddit-preview">
             <h3 className="author">
               {recipient} {addressLogo}
@@ -165,7 +188,14 @@ export default (props) => {
             {content && <p className="body">{content}</p>}
           </div>
         : <div className="cute-input target-container">
-            <input placeholder="Paste recipient or content url" value={url} onChange={e => setUrl(e.target.value)} onKeyPress={onlyPaste} />
+            {userMode && <span className="user-prefix" onClick={() => urlRef.current.focus()}>
+               /u/
+             </span>}
+            <input ref={urlRef}
+                   value={url}
+                   onChange={e => setUrl(e.target.value)}
+                   onKeyPress={!userMode && onlyPaste}
+                   placeholder={userMode ? 'vitalik' : 'Paste a reddit post here'}/>
           </div>
       }
       <div className="cute-input quantity-container">
