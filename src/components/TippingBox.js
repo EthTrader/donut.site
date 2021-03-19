@@ -27,7 +27,7 @@ export default (props) => {
   // const [useRelay, setUseRelay] = useState(false)
   const [url, setUrl] = useState("")
   const [contentId, setContentId] = useState(props.contentId)
-  const [recipient, setRecipient] = useState(props.recipient)
+  const [recipient, setRecipient] = useState(props.recipient || '')
   const [donutAddress, setDonutAddress] = useState(props.address)
   const [torusAddress, setTorusAddress] = useState()
   const [amount, setAmount] = useState("1,000")
@@ -49,10 +49,14 @@ export default (props) => {
     setContentId('');
     setContent('');
     setRecipient('');
+    if(urlRef && urlRef.current){
+      urlRef.current.focus()
+    }
   }
 
   useEffect(()=>{
-    if(!url) { setContentId(''); setRecipient(''); return; }
+    // if(!url) { console.log("NO URL"); setContentId(''); setRecipient(''); return; }
+    if(!url) return;
     let id='', tnum=0;
 
     try {
@@ -76,8 +80,9 @@ export default (props) => {
       } else if (!userMode) badUrl(url)
     }
 
-    if([1,3].includes(tnum))
+    if([1,3].includes(tnum)){
       setContentId(`t${tnum}_${id}`)
+    }
   }, [url]);
 
   const badUrl = (url)=>{
@@ -101,6 +106,8 @@ export default (props) => {
 
   useEffect(()=>{
     if(!recipient) { setDonutAddress(''); setTorusAddress(''); return; }
+    if(contentId) setUserMode(false);
+    else setUserMode(true);
     async function getAddress(){
       const { error } = await fetchCors(`https://old.reddit.com/user/${recipient}/about.json`)
       if(error) {
@@ -126,14 +133,15 @@ export default (props) => {
     setApproved(allowance.gte(parseEther(amount.replace(/,/g, ''))))
   }
 
+  function updateRecipient(e){
+    let name = e.target.value
+    clearTimeout(timeout);
+    timeout = setTimeout(() => isRedditUsername(name).then(valid=>valid && setRecipient(name)), 250);
+  }
+
   const setFormattedTipAmount = amount => {
     setAmount(commaNumber(amount.replace(/,/g, '')));
   };
-
-  const buttonDisabled = isSending || !amount;
-  const buttonClass = classNames('complete cute-pink-btn', {
-    disabled: buttonDisabled,
-  });
 
   const [relayOn, setRelayOn] = useState(true);
   const toggleRelay = () => setRelayOn(!relayOn);
@@ -141,13 +149,18 @@ export default (props) => {
   let address, addressLogo
   if(donutAddress) {
     address = donutAddress
-    addressLogo = <span style={{cursor: "default", marginLeft: ".25em"}} title={`Using donut registered address for ${recipient} (${address})`}>🍩</span>
+    addressLogo = <span className="address-logo donut" style={{marginLeft: ".25em"}} title={`Using donut registered address for ${recipient} (${address})`}>🍩</span>
   } else if(torusAddress) {
     address = torusAddress
-    addressLogo = <img className="torus-logo" src="/torus_logo.png" alt="Torus Logo" title={`Using Tor.us address for ${recipient} (${address})`} />
+    addressLogo = <img className="address-logo torus" src="/torus_logo.png" alt="Torus Logo" title={`Using Tor.us address for ${recipient} (${address})`} />
   } else {
-    addressLogo = <span className="wait"></span>
+    addressLogo = <span className="address-logo wait"></span>
   }
+
+  const buttonDisabled = isSending || !amount || !address;
+  const buttonClass = classNames('complete cute-pink-btn', {
+    disabled: buttonDisabled,
+  });
 
   let action
   if(active){
@@ -168,9 +181,24 @@ export default (props) => {
   if(recipient){
     recipientHeader = <React.Fragment>
       <a style={{textDecoration: "none"}} target="blank" href={`https://www.reddit.com/u/${recipient}`}>/u/{recipient}</a>
-      <FontAwesomeIcon className="cancel" icon={faTimes} onClick={()=>setUrl("") || urlRef.current.focus()} />
+      <FontAwesomeIcon className="cancel" icon={faTimes} onClick={clear} />
     </React.Fragment>
   }
+
+  let inputArea
+  if(userMode) {
+    inputArea = <div className="cute-input target-container">
+        <span className="user-prefix" onClick={() => urlRef.current.focus()}>/u/</span>
+        <input ref={urlRef} value={recipient} onChange={updateRecipient} placeholder={'vitalik'}/>
+        {addressLogo}
+      </div>
+  } else {
+    inputArea = <div className="cute-input target-container">
+        <input ref={urlRef} value={url} onChange={e => setUrl(e.target.value)} onKeyPress={onlyPaste} placeholder={'Paste a reddit post here'}/>
+      </div>
+  }
+
+
   return (
     <div className="tipping-interface box">
       <div className="tip-token">🍩</div>
@@ -187,16 +215,7 @@ export default (props) => {
             </h3>
             {content && <p className="body">{content}</p>}
           </div>
-        : <div className="cute-input target-container">
-            {userMode && <span className="user-prefix" onClick={() => urlRef.current.focus()}>
-               /u/
-             </span>}
-            <input ref={urlRef}
-                   value={url}
-                   onChange={e => setUrl(e.target.value)}
-                   onKeyPress={!userMode && onlyPaste}
-                   placeholder={userMode ? 'vitalik' : 'Paste a reddit post here'}/>
-          </div>
+        : inputArea
       }
       <div className="cute-input quantity-container">
         <input value={amount} onChange={e => setFormattedTipAmount(e.target.value)} />
@@ -227,14 +246,16 @@ async function approve(token, spender, setIsSending){
 }
 
 async function tip(signer, chainId, tokenSymbol, recipientAddress, amount, contentId, setIsSending){
+  const amountNum = parseInt(amount.replace(/,/g, ''))
+  console.log(tokenSymbol, recipientAddress, amount, amountNum, contentId)
   setIsSending(true)
   const tokenAddress = addresses[chainId][tokenSymbol]
   const tipping = new Contract(addresses[chainId].tipping, abis.Tipping, signer)
   try {
-    let tx = await tipping.tip(recipientAddress, parseEther(amount.toString()), tokenAddress, formatBytes32String(contentId))
+    let tx = await tipping.tip(recipientAddress, parseEther(amountNum.toString()), tokenAddress, formatBytes32String(contentId))
     await tx.wait()
   } catch(e){
-
+    throw e
   }
   setIsSending(false)
 }

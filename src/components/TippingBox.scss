@@ -53,6 +53,12 @@
   }
 }
 
+.address-logo {
+  display: inline-block;
+  cursor: default;
+  float: right;
+}
+
 .reddit-preview {
   background-color: rgba(0,0,0,.3);
   border: 1px solid #563a3d;
@@ -65,12 +71,10 @@
   .author {
     margin: 0;
     font-weight: 700;
-    .torus-logo {
+    .address-logo.torus {
       vertical-align: middle;
       width: 1em;
       border-radius: 0.5em;
-      margin-left: 0.25em;
-      margin-top: -0.2em;
     }
     .wait:after {
       overflow: hidden;
@@ -165,6 +169,9 @@
     input {
       padding-left: 1px;
     }
+    .address-logo {
+      float: right;
+    }
   }
 
   .quantity-container {
@@ -189,7 +196,7 @@
     padding-right: 3px;
     display: block;
     float: left;
-    margin-top: -1px;
+    // margin-top: -1px;
   }
 
 }
