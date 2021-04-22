@@ -115,7 +115,7 @@ export default (props) => {
         setRecipient('');
         return;
       }
-      const user = getUser({username: recipient})
+      const user = await getUser({username: recipient})
       if(user && !donutAddress) setDonutAddress(user.address)
       const torusAddress = await torus.getPublicAddress({verifier: "reddit", verifierId: recipient})
       setTorusAddress(torusAddress)
@@ -155,7 +155,7 @@ export default (props) => {
   } else if(torusAddress) {
     address = torusAddress
     addressLogo = <img className="address-logo torus" src="/torus_logo.png" alt="Torus Logo" title={`Using Tor.us address for ${recipient} (${address})`} />
-  } else {
+  } else if(recipient) {
     addressLogo = <span className="address-logo wait"></span>
   }
 

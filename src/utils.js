@@ -1,4 +1,4 @@
-import users from './users'
+// import users from './users'
 
 const corsProxyUrl = 'https://cors.bridged.cc'
 
@@ -36,7 +36,9 @@ export async function postData(url = '', data = {}) {
   return response.json(); // parses JSON response into native JavaScript objects
 }
 
-export function getUser({username, address}){
+export async function getUser({username, address}){
+  const res = await fetch("https://ethtrader.github.io/donut.distribution/users.json")
+  const users = await res.json()
   if(username)
     return users.find(u=>u.username.toLowerCase()===username.toLowerCase())
   else if(address)

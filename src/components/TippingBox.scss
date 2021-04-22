@@ -71,20 +71,6 @@
   .author {
     margin: 0;
     font-weight: 700;
-    .address-logo.torus {
-      vertical-align: middle;
-      width: 1em;
-      border-radius: 0.5em;
-    }
-    .wait:after {
-      overflow: hidden;
-      display: inline-block;
-      vertical-align: bottom;
-      -webkit-animation: ellipsis steps(4,end) 900ms infinite;
-      animation: ellipsis steps(4,end) 900ms infinite;
-      content: "\2026"; /* ascii code for the ellipsis character */
-      width: 0px;
-    }
   }
   .body {
     margin: 4px 0 0 0;
@@ -197,6 +183,22 @@
     display: block;
     float: left;
     // margin-top: -1px;
+  }
+
+  .address-logo.torus {
+    vertical-align: middle;
+    width: 1em;
+    border-radius: 0.5em;
+  }
+
+  .wait:after {
+    overflow: hidden;
+    display: inline-block;
+    vertical-align: bottom;
+    -webkit-animation: ellipsis steps(4,end) 900ms infinite;
+    animation: ellipsis steps(4,end) 900ms infinite;
+    content: "\2026"; /* ascii code for the ellipsis character */
+    width: 0px;
   }
 
 }
