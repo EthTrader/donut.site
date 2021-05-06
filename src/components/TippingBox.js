@@ -9,8 +9,8 @@ import { parseEther, formatEther } from "@ethersproject/units"
 import { formatBytes32String, parseBytes32String } from "@ethersproject/strings"
 import { MaxUint256 } from "@ethersproject/constants"
 import { useDonuts} from 'hooks/useDonuts';
-import { commaNumber, fetchCors, postData, getUser, onlyPaste, isRedditUsername } from 'utils'
-import { addresses, abis } from "contracts";
+import { commaNumber, fetchCors, postData, getUser, onlyPaste, isRedditUsername, useXDai } from 'utils'
+import { chains, abis } from "contracts";
 import Torus from "@toruslabs/torus-embed";
 const torus = new Torus();
 
@@ -130,7 +130,7 @@ export default (props) => {
 
   async function checkApproval(){
     console.log("checking approval")
-    const allowance = await token.allowance(account, addresses[chainId].tipping)
+    const allowance = await token.allowance(account, chains[chainId].tipping)
     console.log("allowance", allowance)
     setApproved(allowance.gte(parseEther(amount.replace(/,/g, ''))))
   }
@@ -170,7 +170,7 @@ export default (props) => {
       if(approved) {
         action = <div className={buttonClass} onClick={()=>tip(signer, chainId, 'DONUT', address, amount, contentId, setIsSending)}>Send Tip</div>
       } else {
-        action = <div className={buttonClass} onClick={()=>approve(token.connect(signer), addresses[chainId].tipping, setIsSending).then(checkApproval)}>Approve</div>
+        action = <div className={buttonClass} onClick={()=>approve(token.connect(signer), chains[chainId].tipping, setIsSending).then(checkApproval)}>Approve</div>
       }
     } else {
       action = <div className={buttonClass} onClick={()=>useXDai(library, setIsSending)}>Use xDai</div>
@@ -251,34 +251,13 @@ async function tip(signer, chainId, tokenSymbol, recipientAddress, amount, conte
   amount = amount.replace(/,/g, '')
   console.log(tokenSymbol, recipientAddress, amount, contentId)
   setIsSending(true)
-  const tokenAddress = addresses[chainId][tokenSymbol]
-  const tipping = new Contract(addresses[chainId].tipping, abis.Tipping, signer)
+  const tokenAddress = chains[chainId][tokenSymbol.toLowerCase()]
+  const tipping = new Contract(chains[chainId].tipping, abis.Tipping, signer)
   try {
     let tx = await tipping.tip(recipientAddress, parseEther(amount), tokenAddress, formatBytes32String(contentId))
     await tx.wait()
   } catch(e){
     throw e
-  }
-  setIsSending(false)
-}
-
-async function useXDai(library, setIsSending){
-  setIsSending(true)
-  try {
-    let reponse = await library.jsonRpcFetchFunc("wallet_addEthereumChain", [{
-      chainId: "0x64", // A 0x-prefixed hexadecimal string
-      chainName: "xDai",
-      nativeCurrency: {
-        name: "xDai",
-        symbol: "xDai", // 2-6 characters long
-        decimals: 18,
-      },
-      rpcUrls: ["https://rpc.xdaichain.com/"],
-      blockExplorerUrls: ["https://blockscout.com/xdai/mainnet"],
-      // iconUrls: string[]; // Currently ignored.
-    }])
-  } catch(e){
-
   }
   setIsSending(false)
 }

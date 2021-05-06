@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext, createContext } from "react";
 import { Contract } from "@ethersproject/contracts";
 import { Web3Provider } from "@ethersproject/providers";
 import { Zero } from "@ethersproject/constants";
-import { addresses, abis } from "contracts";
+import { chains, abis } from "contracts";
 
 const donutContext = createContext();
 
@@ -25,8 +25,8 @@ function useProvideDonuts({account, active, library, chainId}){
   useEffect(() => {
     if(!active) { setSigner(null); setFeeBalance(Zero); setDonutBalance(Zero); setToken(null); setTipping(null); return; }
     setSigner(library.getSigner())
-    const token = new Contract(addresses[chainId.toString()].DONUT, abis.IERC20, library);
-    const tipping = new Contract(addresses[chainId.toString()].tipping, abis.Tipping, library);
+    const token = new Contract(chains[chainId.toString()].donut, abis.IERC20, library);
+    const tipping = new Contract(chains[chainId.toString()].tipping, abis.Tipping, library);
     setToken(token);
     setTipping(tipping);
     async function getBalance(account){

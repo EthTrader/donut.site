@@ -1,4 +1,4 @@
 export { default as abis } from "./abis";
-export { default as addresses } from "./addresses";
+export { default as chains } from "./chains";
 
-export * from "./addresses";
+export * from "./chains";

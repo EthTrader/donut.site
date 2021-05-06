@@ -93,3 +93,25 @@ export function onlyPaste(evt){
 		theEvent.preventDefault();
 	}
 }
+
+
+export async function useXDai(library, setIsSending){
+  setIsSending(true)
+  try {
+    let reponse = await library.jsonRpcFetchFunc("wallet_addEthereumChain", [{
+      chainId: "0x64", // A 0x-prefixed hexadecimal string
+      chainName: "xDai",
+      nativeCurrency: {
+        name: "xDai",
+        symbol: "xDai", // 2-6 characters long
+        decimals: 18,
+      },
+      rpcUrls: ["https://rpc.xdaichain.com/"],
+      blockExplorerUrls: ["https://blockscout.com/xdai/mainnet"],
+      // iconUrls: string[]; // Currently ignored.
+    }])
+  } catch(e){
+
+  }
+  setIsSending(false)
+}
