@@ -1,6 +1,7 @@
 // import users from './users'
 
-const corsProxyUrl = 'https://cors.bridged.cc'
+// const corsProxyUrl = 'https://cors.bridged.cc'
+const corsProxyUrl = 'https://crossorigin.me'
 
 export const commaNumber = num => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",").replace(/[^0-9^,^\.]+/g, '');
 
