@@ -30,7 +30,7 @@ export default (props) => {
   const [recipient, setRecipient] = useState(props.recipient || '')
   const [donutAddress, setDonutAddress] = useState(props.address)
   const [torusAddress, setTorusAddress] = useState()
-  const [amount, setAmount] = useState("1,000")
+  const [amount, setAmount] = useState("1")
   const [approved, setApproved] = useState(false)
   const [content, setContent] = useState('')
 
