@@ -62,12 +62,11 @@ export default () => {
         <ConnectYourWalletButton
           connect={() => {
             activate(new WalletConnectConnector( {
-              infuraId: undefined,
-              rpc: {
-                100: "https://dai.poa.network/",
-              },
-              chainId: 100
-            }));
+              supportedChainIds : [100],
+              rpc: {100 : "https://dai.poa.network/"},
+              // bridge: "https://bridge.walletconnect.org",
+              qrcode: true,
+            }), undefined, true);
           }}
         />
       )}
