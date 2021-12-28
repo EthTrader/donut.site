@@ -1,0 +1,56 @@
+.wallet-info {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+.wallet-info .light-background {
+  width: auto;
+  border-radius: 8px;
+}
+.wallet-info .light-background.left-side {
+  float: left;
+}
+.wallet-info .light-background.close-button {
+  float: right;
+}
+.wallet-info .light-background.button {
+  margin-left: 9px;
+  padding-top: 9px;
+  padding-bottom: 8px;
+  padding-left: 3px;
+  padding-right: 3px;
+}
+.wallet-info .light-background.button:hover {
+  background-color: #34112d;
+  cursor: pointer;
+}
+.wallet-info .light-background.button:active {
+  background-color: #1e0e1b;
+}
+.wallet-info .donut-bal {
+  display: inline-block;
+  padding-right: 10px;
+  padding-left: 10px;
+}
+.wallet-info .address-container {
+  display: inline-block;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  padding: 9px;
+  position: relative;
+}
+.wallet-info .address-container .short-address {
+  display: inline-block;
+  padding-right: 25px;
+  padding-left: 5px;
+}
+.wallet-info .address-container .paper {
+  position: absolute;
+  right: 9px;
+  top: 9px;
+}
+.wallet-info .disconnect {
+  display: inline-block;
+  padding-right: 10px;
+  padding-left: 10px;
+}
