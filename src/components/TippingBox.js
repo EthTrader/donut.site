@@ -14,7 +14,7 @@ import { chains, abis } from "contracts";
 import Torus from "@toruslabs/torus-embed";
 const torus = new Torus();
 
-import './TippingBox.css';
+import './TippingBox.scss';
 
 let timeout;
 

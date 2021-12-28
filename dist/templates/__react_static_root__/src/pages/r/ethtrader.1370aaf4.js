@@ -1,1 +1,0 @@
-(window.webpackJsonp=window.webpackJsonp||[]).push([[7],{138:function(n,o,e){"use strict";e.r(o);e(4);o.default=function(){var n,o=(n="","undefined"!=typeof window&&(n=window.location.search),new URLSearchParams(n));return"undefined"!=typeof window&&window.location.replace("".concat(window.location.origin,"/tip?contentId=").concat(o.get("contentId"))),null}}}]);

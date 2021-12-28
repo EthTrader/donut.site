@@ -12,7 +12,7 @@ import { useDonuts } from "hooks/useDonuts";
 import Jazzicon, { jsNumberForAddress } from "react-jazzicon";
 import { shortNum } from "../utils";
 import { formatEther } from "@ethersproject/units";
-import "./WalletInfo.css";
+import "components/WalletInfo.scss";
 
 const ConnectYourWalletButton = ({ connect }) => {
   return (
