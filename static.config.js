@@ -2,7 +2,7 @@ import React from 'react'
 import path from 'path'
 
 export default {
-  siteRoot: 'https://www.donut.finance',
+  siteRoot: 'https://musing-jang-45913b.netlify.app/',
   Document: ({
     Html,
     Head,
