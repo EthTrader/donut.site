@@ -1,7 +1,8 @@
 // import users from './users'
 
 // const corsProxyUrl = 'https://cors.bridged.cc'
-const corsProxyUrl = 'https://api.allorigins.win/get?url='
+// const corsProxyUrl = 'https://api.allorigins.win/get?url='
+const corsProxyUrl = 'https://corsproxy.io/?'
 
 export const commaNumber = num => num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",").replace(/[^0-9^,^\.]+/g, '');
 
@@ -17,9 +18,7 @@ export const shortNum = donuts => {
 export async function fetchCors(url=''){
   const response = await fetch(`${corsProxyUrl}${url}`)
   const json = await response.json()
-  if(json.contents){
-    return JSON.parse(json.contents)
-  }
+  return json
 }
 
 export async function postData(url = '', data = {}) {

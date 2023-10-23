@@ -8,7 +8,8 @@
     "lpToken": "0x718Dd8B743ea19d71BDb4Cb48BB984b73a65cE06",
     "stakingContract": "0x813fd5A7B6f6d792Bf9c03BBF02Ec3F08C9f98B2",
     "poolAddPath": "https://app.uniswap.org/#/add/v2/",
-    "swapMarketLabel": "Uniswap v2"
+    "swapMarketLabel": "Uniswap v2",
+    "treasuryMultiSig": "0x367b68554f9CE16A87fD0B6cE4E70d465A0C940E"
   },
   "100": {
     "label": "xdai",
@@ -20,6 +21,7 @@
     "lpToken": "0x077240a400b1740C8cD6f73DEa37DA1F703D8c00",
     "stakingContract": "0x84b427415A23bFB57Eb94a0dB6a818EB63E2429D",
     "poolAddPath": "https://app.honeyswap.org/#/add/",
-    "swapMarketLabel": "Honeyswap"
+    "swapMarketLabel": "Honeyswap",
+    "treasuryMultiSig": "0x682b5664C2b9a6a93749f2159F95c23fEd654F0A"
   }
 }

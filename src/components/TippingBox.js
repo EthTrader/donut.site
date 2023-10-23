@@ -11,8 +11,6 @@ import { MaxUint256 } from "@ethersproject/constants"
 import { useDonuts} from 'hooks/useDonuts';
 import { commaNumber, fetchCors, postData, getUser, onlyPaste, isRedditUsername, useXDai } from 'utils'
 import { chains, abis } from "contracts";
-import Torus from "@toruslabs/torus-embed";
-const torus = new Torus();
 
 import './TippingBox.scss';
 
@@ -29,7 +27,6 @@ export default (props) => {
   const [contentId, setContentId] = useState(props.contentId)
   const [recipient, setRecipient] = useState(props.recipient || '')
   const [donutAddress, setDonutAddress] = useState(props.address)
-  const [torusAddress, setTorusAddress] = useState()
   const [amount, setAmount] = useState("1")
   const [approved, setApproved] = useState(false)
   const [content, setContent] = useState('')
@@ -105,7 +102,7 @@ export default (props) => {
   }, [contentId])
 
   useEffect(()=>{
-    if(!recipient) { setDonutAddress(''); setTorusAddress(''); return; }
+    if(!recipient) { setDonutAddress(''); return; }
     if(contentId) setUserMode(false);
     else setUserMode(true);
     async function getAddress(){
@@ -117,8 +114,6 @@ export default (props) => {
       }
       const user = await getUser({username: recipient})
       if(user && !donutAddress) setDonutAddress(user.address)
-      const torusAddress = await torus.getPublicAddress({verifier: "reddit", verifierId: recipient})
-      setTorusAddress(torusAddress)
     }
     getAddress()
   }, [recipient])
@@ -129,9 +124,7 @@ export default (props) => {
   }, [token, amount])
 
   async function checkApproval(){
-    console.log("checking approval")
     const allowance = await token.allowance(account, chains[chainId].tipping)
-    console.log("allowance", allowance)
     setApproved(allowance.gte(parseEther(amount.replace(/,/g, ''))))
   }
 
@@ -152,11 +145,9 @@ export default (props) => {
   if(donutAddress) {
     address = donutAddress
     addressLogo = <span className="address-logo donut" style={{marginLeft: ".25em"}} title={`Using donut registered address for ${recipient} (${address})`}>🍩</span>
-  } else if(torusAddress) {
-    address = torusAddress
-    addressLogo = <img className="address-logo torus" src="/torus_logo.png" alt="Torus Logo" title={`Using Tor.us address for ${recipient} (${address})`} />
-  } else if(recipient) {
-    addressLogo = <span className="address-logo wait"></span>
+  }  else if(recipient && chainId) {
+    address = chains[chainId].treasuryMultiSig
+    addressLogo = <span className="address-logo donut" style={{marginLeft: ".25em"}} title={`${recipient} can collect from Treasury Multisig (${chains[chainId].treasuryMultiSig})`}>🏦</span>
   }
 
   const buttonDisabled = isSending || !amount || !address;

@@ -22,7 +22,7 @@
     "classnames": "^2.2.6",
     "dayjs": "^1.10.4",
     "ethers": "^5.0.31",
-    "node-sass": "4.14.1",
+    "node-sass": "8.0.0",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "react-hot-loader": "^4.13.0",
