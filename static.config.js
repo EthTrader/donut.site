@@ -15,6 +15,7 @@ export default {
         <title>EthTrader Donuts</title>
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/donut_32.webp" />
       </Head>
       <Body>{children}</Body>
     </Html>
